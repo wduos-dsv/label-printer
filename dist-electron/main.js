@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { ipcMain, app, BrowserWindow } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -26,6 +26,30 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
+ipcMain.handle("get-printers", async () => {
+  if (!win) return [];
+  return await win.webContents.getPrintersAsync();
+});
+ipcMain.handle("print-label", async (_, printerName, htmlContent) => {
+  if (!win) return { success: false, error: "Window not found" };
+  try {
+    win.webContents.print(
+      {
+        silent: true,
+        // Set to true to bypass the OS print dialog
+        printBackground: true,
+        deviceName: printerName
+        // Uses the selected printer name here!
+      },
+      (success, failureReason) => {
+        if (!success) console.error("Print failed:", failureReason);
+      }
+    );
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();

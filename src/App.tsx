@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import Home from "./views/Home";
 import Exp from "./views/Exp";
@@ -6,12 +7,73 @@ import "./App.css";
 
 import icon from "./assets/icon.png";
 
+interface PrinterInfo {
+  name: string;
+  displayName: string;
+  description: string;
+  status: number;
+  isDefault: boolean;
+}
+
 export default function App() {
+  const [printers, setPrinters] = useState<PrinterInfo[]>([]);
+  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function loadPrinters() {
+      try {
+        // Invoke the IPC handler exposed via preload
+        const printerList = await (window as any).ipcRenderer.invoke(
+          "get-printers",
+        );
+        setPrinters(printerList);
+
+        // Automatically select the system's default printer if available
+        const defaultPrinter = printerList.find(
+          (p: PrinterInfo) => p.isDefault,
+        );
+        if (defaultPrinter) {
+          setSelectedPrinter(defaultPrinter.name);
+        } else if (printerList.length > 0) {
+          setSelectedPrinter(printerList[0].name);
+        }
+      } catch (error) {
+        console.error("Failed to fetch printers:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadPrinters();
+  }, []);
+
   return (
     <HashRouter>
       <div className="App">
         <header>
           <img src={icon} className="app-icon" alt="App Icon" />
+          <div>
+            {loading ? (
+              <p>Carregando impressoras...</p>
+            ) : printers.length === 0 ? (
+              <p>Nenhuma impressora encontrada.</p>
+            ) : (
+              <>
+                <select
+                  value={selectedPrinter}
+                  onChange={(e) => setSelectedPrinter(e.target.value)}
+                >
+                  {printers.map((printer) => (
+                    <option key={printer.name} value={printer.name}>
+                      {printer.displayName || printer.name}{" "}
+                      {printer.isDefault ? "(Padrão)" : ""}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
+          </div>
         </header>
 
         <nav>
@@ -50,7 +112,10 @@ export default function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/exp" element={<Exp />} />
+            <Route
+              path="/exp"
+              element={<Exp selectedPrinter={selectedPrinter} />}
+            />
             <Route path="/rec" element={<Rec />} />
           </Routes>
         </main>

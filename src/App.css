@@ -6,10 +6,24 @@ header {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  gap: 1rem;
   padding: 1rem;
 }
 header img {
   height: 1.5rem;
+}
+header div select {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--accent-tertiary);
+  background-color: var(--main-window);
+}
+header div select option {
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: var(--text);
 }
 
 nav {
@@ -43,5 +57,5 @@ main {
   border-top: 1px solid var(--accent-opaque);
   border-right: 1px solid var(--accent-opaque);
   border-top-right-radius: 8px;
-  background-color: #1a1a1a;
+  background-color: var(--main-window);
 }

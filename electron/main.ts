@@ -27,6 +27,8 @@ function createWindow() {
     },
   });
 
+  win.removeMenu();
+
   win.webContents.on("did-finish-load", () => {
     win?.webContents.send("main-process-message", new Date().toLocaleString());
   });

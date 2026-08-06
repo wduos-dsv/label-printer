@@ -1,67 +1,4 @@
-import { useEffect, useState } from "react";
-
-interface PrinterInfo {
-  name: string;
-  displayName: string;
-  description: string;
-  status: number;
-  isDefault: boolean;
-}
-
 export default function Home() {
-  const [printers, setPrinters] = useState<PrinterInfo[]>([]);
-  const [selectedPrinter, setSelectedPrinter] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    async function loadPrinters() {
-      try {
-        // Invoke the IPC handler exposed via preload
-        const printerList = await (window as any).ipcRenderer.invoke(
-          "get-printers",
-        );
-        setPrinters(printerList);
-
-        // Automatically select the system's default printer if available
-        const defaultPrinter = printerList.find(
-          (p: PrinterInfo) => p.isDefault,
-        );
-        if (defaultPrinter) {
-          setSelectedPrinter(defaultPrinter.name);
-        } else if (printerList.length > 0) {
-          setSelectedPrinter(printerList[0].name);
-        }
-      } catch (error) {
-        console.error("Failed to fetch printers:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadPrinters();
-  }, []);
-
-  const handlePrint = async () => {
-    if (!selectedPrinter) {
-      alert("Por favor, selecione uma impressora.");
-      return;
-    }
-
-    try {
-      const result = await (window as any).ipcRenderer.invoke(
-        "print-label",
-        selectedPrinter,
-      );
-      if (result.success) {
-        alert("Impresso com sucesso!");
-      } else {
-        alert("Erro ao imprimir: " + result.error);
-      }
-    } catch (error) {
-      console.error("Erro na comunicação de impressão:", error);
-    }
-  };
-
   return (
     <div
       className="Home"
@@ -74,41 +11,20 @@ export default function Home() {
         textAlign: "center",
       }}
     >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        data-name="Layer 1"
+        viewBox="0 0 24 24"
+        style={{
+          width: "64px",
+          height: "64px",
+          fill: "var(--accent-opaque)",
+        }}
+      >
+        <path d="M10,19c0-1.1,.9-2,2-2s2,.9,2,2-.9,2-2,2-2-.9-2-2Zm8.36-4.24c.59-.59,.59-1.54,0-2.12-3.51-3.51-9.22-3.51-12.73,0-.59,.59-.59,1.54,0,2.12s1.54,.59,2.12,0c2.34-2.34,6.15-2.34,8.49,0,.29,.29,.68,.44,1.06,.44s.77-.15,1.06-.44Zm5.17-4.67c.6-.57,.62-1.52,.05-2.12-.09-.09-.18-.19-.27-.28-3.02-3.02-7.04-4.69-11.31-4.69S3.71,4.66,.69,7.68c-.09,.09-.18,.19-.27,.28-.57,.6-.55,1.55,.05,2.12,.6,.57,1.55,.55,2.12-.05l.22-.23c2.46-2.46,5.72-3.81,9.19-3.81s6.74,1.35,9.2,3.81l.22,.22c.29,.31,.69,.46,1.08,.46,.37,0,.75-.14,1.04-.41Z" />
+      </svg>
       <p>Impressão de etiquetas padrão ARQ</p>
       <small className="dim">Selecione uma opção na lista ao lado.</small>
-
-      <div style={{ marginTop: "20px" }}>
-        <h3>Impressora</h3>
-        {loading ? (
-          <p>Carregando impressoras...</p>
-        ) : printers.length === 0 ? (
-          <p>Nenhuma impressora encontrada.</p>
-        ) : (
-          <>
-            <select
-              value={selectedPrinter}
-              onChange={(e) => setSelectedPrinter(e.target.value)}
-              style={{
-                padding: "8px",
-                fontSize: "14px",
-                minWidth: "220px",
-                marginRight: "10px",
-              }}
-            >
-              {printers.map((printer) => (
-                <option key={printer.name} value={printer.name}>
-                  {printer.displayName || printer.name}{" "}
-                  {printer.isDefault ? "(Padrão)" : ""}
-                </option>
-              ))}
-            </select>
-
-            <button onClick={handlePrint} style={{ padding: "8px 16px" }}>
-              Imprimir Etiqueta
-            </button>
-          </>
-        )}
-      </div>
     </div>
   );
 }

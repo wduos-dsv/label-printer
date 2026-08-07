@@ -19,8 +19,6 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentView, setCurrentView] = useState<string>("/");
 
-  const views = ["/", "/exp", "/rec"];
-
   useEffect(() => {
     async function loadPrinters() {
       try {

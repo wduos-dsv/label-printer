@@ -12,15 +12,12 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win;
 function createWindow() {
   win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
     webPreferences: {
       preload: path.join(__dirname$1, "preload.mjs")
     }
   });
   win.removeMenu();
-  win.webContents.on("did-finish-load", () => {
-    win == null ? void 0 : win.webContents.send("main-process-message", (/* @__PURE__ */ new Date()).toLocaleString());
-  });
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
   } else {
@@ -34,18 +31,26 @@ ipcMain.handle("get-printers", async () => {
 ipcMain.handle("print-label", async (_, printerName, htmlContent) => {
   if (!win) return { success: false, error: "Window not found" };
   try {
-    win.webContents.print(
-      {
-        silent: true,
-        // Set to true to bypass the OS print dialog
-        printBackground: true,
-        deviceName: printerName
-        // Uses the selected printer name here!
-      },
-      (success, failureReason) => {
-        if (!success) console.error("Print failed:", failureReason);
-      }
+    await win.loadURL(
+      `data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`
     );
+    await new Promise((resolve, reject) => {
+      win.webContents.print(
+        {
+          silent: true,
+          // Bypasses OS print dialog
+          printBackground: true,
+          deviceName: printerName
+        },
+        (success, failureReason) => {
+          if (!success) {
+            reject(new Error(failureReason));
+          } else {
+            resolve();
+          }
+        }
+      );
+    });
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };

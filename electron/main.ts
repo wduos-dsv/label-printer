@@ -20,6 +20,7 @@ let win: BrowserWindow | null;
 
 function createWindow() {
   win = new BrowserWindow({
+    frame: false,
     icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.mjs"),
@@ -79,6 +80,23 @@ ipcMain.handle("print-label", async (_, printerName, htmlContent) => {
     // Safely type-cast the unknown error
     return { success: false, error: (error as Error).message };
   }
+});
+
+// Window control handlers
+ipcMain.on("window-minimize", () => {
+  win?.minimize();
+});
+
+ipcMain.on("window-maximize", () => {
+  if (win?.isMaximized()) {
+    win.unmaximize();
+  } else {
+    win?.maximize();
+  }
+});
+
+ipcMain.on("window-close", () => {
+  win?.close();
 });
 
 app.on("window-all-closed", () => {

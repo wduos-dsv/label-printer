@@ -4,6 +4,7 @@ import Home from "./views/Home";
 import Exp from "./views/Exp";
 import Rec from "./views/Rec";
 import "./App.css";
+import icon from "./assets/icon.png";
 
 interface PrinterInfo {
   name: string;
@@ -51,6 +52,7 @@ export default function App() {
     <HashRouter>
       <div className="App">
         <header>
+          <img src={icon} alt="Icon" />
           <div>
             {loading ? (
               <p>Carregando impressoras...</p>
@@ -71,6 +73,31 @@ export default function App() {
                 </select>
               </>
             )}
+          </div>
+          <div id="control-btns">
+            <button
+              type="button"
+              onClick={() =>
+                (window as any).ipcRenderer.send("window-minimize")
+              }
+            >
+              a
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                (window as any).ipcRenderer.send("window-maximize")
+              }
+            >
+              b
+            </button>
+
+            <button
+              type="button"
+              onClick={() => (window as any).ipcRenderer.send("window-close")}
+            >
+              c
+            </button>
           </div>
         </header>
 

@@ -12,6 +12,7 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win;
 function createWindow() {
   win = new BrowserWindow({
+    frame: false,
     icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
     webPreferences: {
       preload: path.join(__dirname$1, "preload.mjs")
@@ -55,6 +56,19 @@ ipcMain.handle("print-label", async (_, printerName, htmlContent) => {
   } catch (error) {
     return { success: false, error: error.message };
   }
+});
+ipcMain.on("window-minimize", () => {
+  win == null ? void 0 : win.minimize();
+});
+ipcMain.on("window-maximize", () => {
+  if (win == null ? void 0 : win.isMaximized()) {
+    win.unmaximize();
+  } else {
+    win == null ? void 0 : win.maximize();
+  }
+});
+ipcMain.on("window-close", () => {
+  win == null ? void 0 : win.close();
 });
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

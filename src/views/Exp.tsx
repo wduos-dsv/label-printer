@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
+  const [printMode, setPrintMode] = useState<"full" | "specific">("full");
+
   const handlePrint = async () => {
     if (!selectedPrinter) {
       alert("Por favor, selecione uma impressora.");
@@ -22,9 +26,34 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
 
   return (
     <div>
-      <h2>Exp View</h2>
-      <p>Welcome to the Exp view!</p>
+      <h2 className="view-title">Etiquetas EXP</h2>
 
+      <small className="view-subtitle">modo</small>
+      <div className="flex-btns">
+        <button
+          type="button"
+          onClick={() => setPrintMode("full")}
+          className={printMode === "full" ? "active" : ""}
+        >
+          Sequência Completa
+        </button>
+        <button
+          type="button"
+          onClick={() => setPrintMode("specific")}
+          className={printMode === "specific" ? "active" : ""}
+        >
+          Etiqueta Específica
+        </button>
+      </div>
+
+      <small className="view-subtitle">Município</small>
+      <select>
+        <option value="1">Itajaí</option>
+        <option value="2">Cachoeirinha</option>
+        <option value="3">Passo Fundo</option>
+      </select>
+
+      <br />
       <button onClick={handlePrint} style={{ padding: "8px 16px" }}>
         Imprimir Etiqueta
       </button>

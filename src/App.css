@@ -40,14 +40,12 @@ nav a {
   align-items: center;
   gap: 0.5rem;
 }
-nav a.active::before {
+nav a.active::after {
   content: "•";
-  position: absolute;
-  left: -0.75rem;
 }
 nav a svg {
   height: 0.85rem;
-  fill: var(--accent);
+  fill: var(--text);
 }
 nav a:hover svg {
   fill: var(--accent-secondary);

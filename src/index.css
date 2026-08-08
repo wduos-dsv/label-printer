@@ -11,6 +11,12 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  --green: #56e793;
+  --green-opaque: #56e7926c;
+  --yellow: #e6d262;
+  --yellow-opaque: #ffe8645e;
+  --red: #ff6479;
+  --red-opaque: #ff647977;
   --accent: #646cff;
   --accent-opaque: #646cff42;
   --accent-secondary: #535bf2;
@@ -38,7 +44,7 @@ body {
   overflow: hidden;
 }
 
-button,
+button:not(.control-btns button),
 input {
   border-radius: 8px;
   border: 2px solid transparent;
@@ -50,12 +56,12 @@ input {
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover,
+button:not(.control-btns button):hover,
 input:hover {
   border-color: var(--accent-tertiary);
 }
-button:focus,
-button:focus-visible,
+button:not(.control-btns button):focus,
+button:not(.control-btns button):focus-visible,
 input:focus,
 input:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -100,12 +106,12 @@ input:focus-visible {
     --background-color: #ffffff;
   }
 
-  button:hover,
+  button:not(.control-btns button):hover,
   input:hover {
     border-color: var(--accent-opaque);
   }
-  button:focus,
-  button:focus-visible,
+  button:not(.control-btns button):focus,
+  button:not(.control-btns button):focus-visible,
   input:focus,
   input:focus-visible {
     outline: 4px auto var(--accent-tertiary);

@@ -4,7 +4,11 @@ import Home from "./views/Home";
 import Exp from "./views/Exp";
 import Rec from "./views/Rec";
 import "./App.css";
+
 import icon from "./assets/icon.png";
+import minus from "./assets/minus.svg";
+import square from "./assets/square.svg";
+import cross from "./assets/cross.svg";
 
 interface PrinterInfo {
   name: string;
@@ -74,31 +78,6 @@ export default function App() {
               </>
             )}
           </div>
-          <div id="control-btns">
-            <button
-              type="button"
-              onClick={() =>
-                (window as any).ipcRenderer.send("window-minimize")
-              }
-            >
-              a
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                (window as any).ipcRenderer.send("window-maximize")
-              }
-            >
-              b
-            </button>
-
-            <button
-              type="button"
-              onClick={() => (window as any).ipcRenderer.send("window-close")}
-            >
-              c
-            </button>
-          </div>
         </header>
 
         <nav>
@@ -132,6 +111,31 @@ export default function App() {
             </svg>
             Recebimento
           </Link>
+
+          <div className="control-btns">
+            <div
+              className="minimize-btn"
+              onClick={() =>
+                (window as any).ipcRenderer.send("window-minimize")
+              }
+            >
+              <img src={minus} alt="Ícone de minimizar" />
+            </div>
+            <div
+              className="maximize-btn"
+              onClick={() =>
+                (window as any).ipcRenderer.send("window-maximize")
+              }
+            >
+              <img src={square} alt="Ícone de maximizar" />
+            </div>
+            <div
+              className="close-btn"
+              onClick={() => (window as any).ipcRenderer.send("window-close")}
+            >
+              <img src={cross} alt="Ícone de fechar" />
+            </div>
+          </div>
         </nav>
 
         <main>

@@ -6,9 +6,6 @@ import Rec from "./views/Rec";
 import "./App.css";
 
 import icon from "./assets/icon.png";
-import minus from "./assets/minus.svg";
-import square from "./assets/square.svg";
-import cross from "./assets/cross.svg";
 
 interface PrinterInfo {
   name: string;
@@ -64,7 +61,9 @@ export default function App() {
                 (window as any).ipcRenderer.send("window-minimize")
               }
             >
-              <img src={minus} alt="Ícone de minimizar" />
+              <svg viewBox="0 0 24 24">
+                <path d="M16.5,13.5h-9a1.5,1.5,0,0,1,0-3h9a1.5,1.5,0,0,1,0,3Z" />
+              </svg>
             </button>
             <button
               className="maximize-btn"
@@ -72,13 +71,17 @@ export default function App() {
                 (window as any).ipcRenderer.send("window-maximize")
               }
             >
-              <img src={square} alt="Ícone de maximizar" />
+              <svg viewBox="0 0 24 24">
+                <path d="M14,19h-4c-2.76,0-5-2.24-5-5v-4c0-2.76,2.24-5,5-5h4c2.76,0,5,2.24,5,5v4c0,2.76-2.24,5-5,5Zm-4-11c-1.1,0-2,.9-2,2v4c0,1.1,.9,2,2,2h4c1.1,0,2-.9,2-2v-4c0-1.1-.9-2-2-2h-4Z" />
+              </svg>
             </button>
             <button
               className="close-btn"
               onClick={() => (window as any).ipcRenderer.send("window-close")}
             >
-              <img src={cross} alt="Ícone de fechar" />
+              <svg viewBox="0 0 24 24">
+                <path d="M14.121,12,18,8.117A1.5,1.5,0,0,0,15.883,6L12,9.879,8.11,5.988A1.5,1.5,0,1,0,5.988,8.11L9.879,12,6,15.882A1.5,1.5,0,1,0,8.118,18L12,14.121,15.878,18A1.5,1.5,0,0,0,18,15.878Z" />
+              </svg>
             </button>
           </div>
         </header>

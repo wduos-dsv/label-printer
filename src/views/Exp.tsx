@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Modal from "../components/Modal";
+// import Modal from "../components/Modal";
 
 export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   const [printMode, setPrintMode] = useState<"full" | "specific">("full");
@@ -14,10 +14,10 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   const [orderNumber, setOrderNumber] = useState("");
   const [palletQuantity, setPalletQuantity] = useState(1);
   const [printRepackLabel, setPrintRepackLabel] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  // const [showModal, setShowModal] = useState(false);
 
   const handlePrint = async () => {
-    setShowModal(true);
+    // setShowModal(true);
 
     alert("Por favor, selecione uma impressora.");
     return;
@@ -44,7 +44,6 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   return (
     <div>
       <h2 className="view-title">Etiquetas EXP</h2>
-
       <small className="view-subtitle">modo</small>
       <div className="flex-btns">
         <button
@@ -62,7 +61,6 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
           Etiqueta Específica
         </button>
       </div>
-
       <small className="view-subtitle">Município</small>
       <div className="flex-btns">
         <button
@@ -87,14 +85,12 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
           Passo Fundo
         </button>
       </div>
-
       <small className="view-subtitle">Data de Expedição</small>
       <input
         type="date"
         value={selectedDate}
         onChange={(event) => setSelectedDate(event.target.value)}
       />
-
       <small className="view-subtitle">Número da Ordem</small>
       <input
         type="number"
@@ -107,7 +103,6 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
           setOrderNumber(digits);
         }}
       />
-
       <small className="view-subtitle">Quantidade de Pallets</small>
       <input
         type="number"
@@ -117,7 +112,6 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
           setPalletQuantity(parseInt(event.target.value) || 1)
         }
       />
-
       <small className="view-subtitle">Imprimir etiqueta de Repack</small>
       <div className="flex-btns">
         <button
@@ -135,7 +129,6 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
           Não
         </button>
       </div>
-
       <button
         className="print-labels-btn"
         onClick={handlePrint}
@@ -144,7 +137,7 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
         Iniciar Impressão
       </button>
 
-      <Modal show={showModal} />
+      {/* <Modal show={showModal} /> */}
     </div>
   );
 }

@@ -33,13 +33,18 @@ header img {
   cursor: pointer;
   transition: 0.2s scale ease-out;
 }
-.control-btns button img {
-  height: 1rem;
+.control-btns button svg {
+  fill: var(--text);
 }
 .minimize-btn,
 .maximize-btn,
 .close-btn {
   background-color: var(--gray);
+}
+.minimize-btn:hover svg,
+.maximize-btn:hover svg,
+.close-btn:hover svg {
+  fill: white;
 }
 .minimize-btn:hover,
 .maximize-btn:hover {
@@ -111,4 +116,11 @@ main {
   border-right: 2px solid var(--accent-opaque);
   border-top-right-radius: 8px;
   background-color: var(--main-window);
+}
+@media (prefers-color-scheme: light) {
+  .minimize-btn,
+  .maximize-btn,
+  .close-btn {
+    background-color: var(--accent-opaque);
+  }
 }

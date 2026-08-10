@@ -67,6 +67,10 @@ input:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+input:not([type="button"]) {
+  width: calc(100% - 2rem);
+}
+
 .dim {
   opacity: 0.5;
 }
@@ -97,6 +101,29 @@ input:focus-visible {
 .flex-btns button.active {
   background-color: var(--accent);
   color: white;
+}
+
+.print-labels-btn {
+  margin-top: 1rem;
+  width: 100%;
+  background-image: linear-gradient(
+    45deg,
+    var(--accent),
+    var(--accent),
+    var(--accent)
+  );
+  color: white;
+  box-shadow: 0 0 15px transparent;
+  transition: background-image 0.2s ease-out;
+}
+.print-labels-btn:hover {
+  background-image: linear-gradient(
+    45deg,
+    var(--accent),
+    var(--accent-tertiary),
+    var(--accent-secondary)
+  );
+  box-shadow: 0 0 15px var(--accent-opaque);
 }
 
 @media (prefers-color-scheme: light) {

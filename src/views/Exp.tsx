@@ -12,10 +12,13 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   });
   const [orderNumber, setOrderNumber] = useState("");
   const [palletQuantity, setPalletQuantity] = useState(1);
+  const [printRepackLabel, setPrintRepackLabel] = useState(false);
 
   const handlePrint = async () => {
+    alert("Por favor, selecione uma impressora.");
+    return;
+
     if (!selectedPrinter) {
-      alert("Por favor, selecione uma impressora.");
       return;
     }
 
@@ -93,6 +96,7 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
         type="number"
         placeholder="6878496221"
         value={orderNumber}
+        min={6878000000}
         max={9999999999}
         onChange={(event) => {
           const digits = event.target.value.replace(/\D/g, "").slice(0, 10);
@@ -110,10 +114,30 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
         }
       />
 
-      <br />
-      <br />
-      <button onClick={handlePrint} style={{ padding: "8px 16px" }}>
-        Imprimir Etiqueta
+      <small className="view-subtitle">Imprimir etiqueta de Repack</small>
+      <div className="flex-btns">
+        <button
+          type="button"
+          onClick={() => setPrintRepackLabel(true)}
+          className={printRepackLabel ? "active" : ""}
+        >
+          Sim
+        </button>
+        <button
+          type="button"
+          onClick={() => setPrintRepackLabel(false)}
+          className={printRepackLabel ? "" : "active"}
+        >
+          Não
+        </button>
+      </div>
+
+      <button
+        className="print-labels-btn"
+        onClick={handlePrint}
+        style={{ padding: "8px 16px" }}
+      >
+        Iniciar Impressão
       </button>
     </div>
   );

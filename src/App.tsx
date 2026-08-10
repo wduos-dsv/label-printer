@@ -57,26 +57,29 @@ export default function App() {
       <div className="App">
         <header>
           <img src={icon} alt="Icon" />
-          <div>
-            {loading ? (
-              <p>Carregando impressoras...</p>
-            ) : printers.length === 0 ? (
-              <p>Nenhuma impressora encontrada.</p>
-            ) : (
-              <>
-                <select
-                  value={selectedPrinter}
-                  onChange={(e) => setSelectedPrinter(e.target.value)}
-                >
-                  {printers.map((printer) => (
-                    <option key={printer.name} value={printer.name}>
-                      {printer.displayName || printer.name}{" "}
-                      {printer.isDefault ? "(Padrão)" : ""}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
+          <div className="control-btns">
+            <button
+              className="minimize-btn"
+              onClick={() =>
+                (window as any).ipcRenderer.send("window-minimize")
+              }
+            >
+              <img src={minus} alt="Ícone de minimizar" />
+            </button>
+            <button
+              className="maximize-btn"
+              onClick={() =>
+                (window as any).ipcRenderer.send("window-maximize")
+              }
+            >
+              <img src={square} alt="Ícone de maximizar" />
+            </button>
+            <button
+              className="close-btn"
+              onClick={() => (window as any).ipcRenderer.send("window-close")}
+            >
+              <img src={cross} alt="Ícone de fechar" />
+            </button>
           </div>
         </header>
 
@@ -112,29 +115,27 @@ export default function App() {
             Recebimento
           </Link>
 
-          <div className="control-btns">
-            <div
-              className="minimize-btn"
-              onClick={() =>
-                (window as any).ipcRenderer.send("window-minimize")
-              }
-            >
-              <img src={minus} alt="Ícone de minimizar" />
-            </div>
-            <div
-              className="maximize-btn"
-              onClick={() =>
-                (window as any).ipcRenderer.send("window-maximize")
-              }
-            >
-              <img src={square} alt="Ícone de maximizar" />
-            </div>
-            <div
-              className="close-btn"
-              onClick={() => (window as any).ipcRenderer.send("window-close")}
-            >
-              <img src={cross} alt="Ícone de fechar" />
-            </div>
+          <div id="printer-picker">
+            <small className="view-subtitle">Seleção de Impressora</small>
+            {loading ? (
+              <p>Carregando impressoras...</p>
+            ) : printers.length === 0 ? (
+              <p>Nenhuma impressora encontrada.</p>
+            ) : (
+              <>
+                <select
+                  value={selectedPrinter}
+                  onChange={(e) => setSelectedPrinter(e.target.value)}
+                >
+                  {printers.map((printer) => (
+                    <option key={printer.name} value={printer.name}>
+                      {printer.displayName || printer.name}{" "}
+                      {printer.isDefault ? "(Padrão)" : ""}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
           </div>
         </nav>
 

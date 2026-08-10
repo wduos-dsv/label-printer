@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Modal from "../components/Modal";
 
 export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   const [printMode, setPrintMode] = useState<"full" | "specific">("full");
@@ -13,8 +14,11 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   const [orderNumber, setOrderNumber] = useState("");
   const [palletQuantity, setPalletQuantity] = useState(1);
   const [printRepackLabel, setPrintRepackLabel] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handlePrint = async () => {
+    setShowModal(true);
+
     alert("Por favor, selecione uma impressora.");
     return;
 
@@ -139,6 +143,8 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
       >
         Iniciar Impressão
       </button>
+
+      <Modal show={showModal} />
     </div>
   );
 }

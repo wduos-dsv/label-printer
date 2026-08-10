@@ -19,6 +19,7 @@ header img {
   align-items: center;
   gap: 0.5rem;
   height: 3.5rem;
+  z-index: 10;
 }
 .control-btns > button {
   display: flex;
@@ -35,24 +36,19 @@ header img {
 .control-btns button img {
   height: 1rem;
 }
-.minimize-btn {
-  background-color: var(--green);
-}
-.minimize-btn:hover {
-  box-shadow: 0 0 0 2px var(--green-opaque);
-  scale: 110%;
-}
-.maximize-btn {
-  background-color: var(--yellow);
-}
-.maximize-btn:hover {
-  box-shadow: 0 0 0 2px var(--yellow-opaque);
-  scale: 110%;
-}
+.minimize-btn,
+.maximize-btn,
 .close-btn {
-  background-color: var(--red);
+  background-color: var(--gray);
+}
+.minimize-btn:hover,
+.maximize-btn:hover {
+  background-color: var(--accent-secondary);
+  box-shadow: 0 0 0 2px var(--accent-opaque);
+  scale: 110%;
 }
 .close-btn:hover {
+  background-color: var(--red);
   box-shadow: 0 0 0 2px var(--red-opaque);
   scale: 110%;
 }
@@ -99,7 +95,7 @@ nav a:hover svg {
   font-size: 0.75rem;
   color: var(--accent-tertiary);
   background-color: var(--main-window);
-  box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 2px 2px 3px rgba(0, 0, 0, 0.05);
 }
 #printer-picker select option {
   border-radius: 4px;

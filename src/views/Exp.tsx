@@ -1,7 +1,11 @@
 import { useState } from "react";
-// import Modal from "../components/Modal";
 
-export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
+interface printerInfo {
+  printerPort: number;
+  printerIP: string;
+}
+
+export default function Exp({ printerPort, printerIP }: printerInfo) {
   const [printMode, setPrintMode] = useState<"full" | "specific">("full");
   const [selectedMunicipality, setSelectedMunicipality] = useState<
     "Itajaí" | "Cachoeirinha" | "Passo Fundo"
@@ -15,32 +19,73 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   const [palletQuantity, setPalletQuantity] = useState(1);
   const [specificLabelToPrint, setSpecificLabelToPrint] = useState(1);
   const [printRepackLabel, setPrintRepackLabel] = useState(false);
-  // const [showModal, setShowModal] = useState(false);
+
+  const [printStatus, setPrintStatus] = useState<
+    "none" | "success" | "error" | "awaiting"
+  >("none");
+  const [printStatusMessage, setPrintStatusMessage] = useState("");
 
   const handlePrint = async () => {
-    // setShowModal(true);
+    setPrintStatus("awaiting");
 
-    alert("Por favor, selecione uma impressora.");
-    return;
-
-    if (!selectedPrinter) {
+    const trimmedOrder = orderNumber.trim();
+    if (!trimmedOrder.match(/^\d{10}$/)) {
+      setPrintStatus("error");
+      setPrintStatusMessage("O número da ordem precisa ter 10 dígitos.");
       return;
     }
 
+    if (printMode === "full") {
+      try {
+        const config = {
+          ip: printerIP,
+          port: printerPort,
+          municipio: selectedMunicipality,
+          dataExp: selectedDate,
+          ordem: trimmedOrder,
+          totalTags: palletQuantity,
+          repack: printRepackLabel ? "Sim" : "Não",
+        };
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result = await (window as any).ipcRenderer.invoke(
+          "print-exp-full-range",
+          config,
+        );
+        if (result.success) {
+          setPrintStatus("success");
+          setPrintStatusMessage("Impressão concluída com sucesso!");
+        } else {
+          setPrintStatus("error");
+          setPrintStatusMessage("Erro! " + result.error);
+        }
+      } catch (error) {
+        setPrintStatus("error");
+        setPrintStatusMessage(`Erro de impressão: ${error}`);
+        console.error("Erro na comunicação de impressão:", error);
+      }
+      return;
+    }
+
+    /* modificar!
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (window as any).ipcRenderer.invoke(
-        "print-label",
+        "print-exp-specific-label",
         selectedPrinter,
       );
       if (result.success) {
-        alert("Impresso com sucesso!");
+        setPrintStatus("success");
+        setPrintStatusMessage("Etiquetas enviadas para fila de impressão!");
       } else {
-        alert("Erro ao imprimir: " + result.error);
+        setPrintStatus("error");
+        setPrintStatusMessage("Erro: " + result.error);
       }
     } catch (error) {
+      setPrintStatus("error");
+      setPrintStatusMessage(`Erro de impressão: ${error}`);
       console.error("Erro na comunicação de impressão:", error);
-    }
+    } */
   };
 
   return (
@@ -148,8 +193,19 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
       <button className="print-labels-btn" onClick={handlePrint}>
         Iniciar Impressão
       </button>
-
-      {/* <Modal show={showModal} /> */}
+      {printStatus === "success" ? (
+        <small className="mrg-top-3 text-xs center green">
+          {printStatusMessage}
+        </small>
+      ) : printStatus === "error" ? (
+        <small className="mrg-top-3 text-xs center err">
+          {printStatusMessage}
+        </small>
+      ) : printStatus === "awaiting" ? (
+        <small className="mrg-top-3 text-xs center dim hold">Aguarde...</small>
+      ) : (
+        <small className="mrg-top-3 text-xs center dim"></small>
+      )}
     </div>
   );
 }

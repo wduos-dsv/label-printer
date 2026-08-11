@@ -2,6 +2,7 @@ import { ipcMain, app, BrowserWindow } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import * as net from "node:net";
 createRequire(import.meta.url);
 const __dirname$1 = path.dirname(fileURLToPath(import.meta.url));
 process.env.APP_ROOT = path.join(__dirname$1, "..");
@@ -29,37 +30,71 @@ function createWindow() {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
 }
-ipcMain.handle("get-printers", async () => {
-  if (!win) return [];
-  return await win.webContents.getPrintersAsync();
-});
-ipcMain.handle("print-label", async (_, printerName, htmlContent) => {
-  if (!win) return { success: false, error: "Window not found" };
-  try {
-    await win.loadURL(
-      `data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`
-    );
-    await new Promise((resolve, reject) => {
-      win.webContents.print(
-        {
-          silent: true,
-          // Bypasses OS print dialog
-          printBackground: true,
-          deviceName: printerName
-        },
-        (success, failureReason) => {
-          if (!success) {
-            reject(new Error(failureReason));
-          } else {
-            resolve();
-          }
-        }
+function sendZplOverTcp(ip, port, zplData) {
+  return new Promise((resolve, reject) => {
+    const client = new net.Socket();
+    client.setTimeout(5e3);
+    client.connect(port, ip, () => {
+      client.write(zplData, "utf-8", () => {
+        setTimeout(() => {
+          client.end();
+        }, 300);
+      });
+    });
+    client.on("error", (err) => {
+      client.destroy();
+      reject(err);
+    });
+    client.on("timeout", () => {
+      client.destroy();
+      reject(
+        new Error(
+          "Tempo de conexão esgotado. Verifique a rede ou configurações da impressora."
+        )
       );
     });
+    client.on("close", () => {
+      resolve();
+    });
+  });
+}
+function generateRegularZpl(cfg, currentIdx, totalTagsFormatted) {
+  const barcodeCounter = String(currentIdx).padStart(3, "0");
+  const printCounter = String(currentIdx).padStart(2, "0");
+  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipio.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.dataExp}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.ordem}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${printCounter}/${totalTagsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDEXP${cfg.ordem}${barcodeCounter}ARQ^FS^FT16,325^A0N,45,46^FDEXP${cfg.ordem}${barcodeCounter}ARQ^FS^PQ1,0,1,Y^XZ`;
+}
+function generateRepackZpl(cfg, totalTagsFormatted) {
+  const repackI = cfg.totalTags + 1;
+  const repackStr = String(repackI).padStart(2, "0");
+  const repackBarcode = String(repackI).padStart(3, "0");
+  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipio.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.dataExp}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.ordem}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${repackStr}/${totalTagsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDREPACK${cfg.ordem}${repackBarcode}^FS^FT16,325^A0N,45,46^FDREPACK${cfg.ordem}${repackBarcode}^FS^PQ1,0,1,Y^XZ`;
+}
+function generateFinalZpl(cfg, totalTagsFormatted) {
+  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipio.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.dataExp}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.ordem}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD00/${totalTagsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FD${cfg.ordem}^FS^FT16,325^A0N,45,46^FD${cfg.ordem}^FS^PQ1,0,1,Y^XZ`;
+}
+ipcMain.handle("print-exp-full-range", async (_, config) => {
+  try {
+    const ip = config.ip || "10.55.22.240";
+    const port = config.port || 9100;
+    const totalTagsFormatted = String(config.totalTags).padStart(2, "0");
+    for (let i = 1; i <= config.totalTags; i++) {
+      const zpl = generateRegularZpl(config, i, totalTagsFormatted);
+      await sendZplOverTcp(ip, port, zpl);
+    }
+    if (config.repack === "Sim") {
+      const zpl = generateRepackZpl(config, totalTagsFormatted);
+      await sendZplOverTcp(ip, port, zpl);
+    }
+    const finalZpl = generateFinalZpl(config, totalTagsFormatted);
+    await sendZplOverTcp(ip, port, finalZpl);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
   }
+});
+ipcMain.handle("get-printers", async () => {
+  if (!win) return [];
+  return await win.webContents.getPrintersAsync();
 });
 ipcMain.on("window-minimize", () => {
   win == null ? void 0 : win.minimize();

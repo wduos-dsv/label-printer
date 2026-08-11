@@ -10,8 +10,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --green: #56e793;
-  --green-opaque: #56e7926c;
+  --green: #2fc16b;
+  --green-opaque: #2fc16c66;
   --yellow: #e6d262;
   --yellow-opaque: #ffe8645e;
   --red: #ff6479;
@@ -89,8 +89,32 @@ input:not([type="button"]) {
 .err {
   color: var(--red);
 }
+.green {
+  color: var(--green);
+}
 .bold {
   font-weight: 600;
+}
+.center {
+  display: block;
+  text-align: center;
+}
+.text-xs {
+  font-size: var(--text-xs);
+}
+.mrg-top-3 {
+  margin-top: var(--spacing-3);
+}
+.hold {
+  animation: pulse 1s ease-in infinite alternate;
+}
+@keyframes pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.1;
+  }
 }
 
 .view-title {

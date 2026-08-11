@@ -65,7 +65,7 @@ nav a {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--spacing-1);
+  gap: var(--spacing-2);
   user-select: none;
 }
 nav a.active::after {

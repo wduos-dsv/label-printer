@@ -26,10 +26,10 @@ export default function Home() {
           <small>Escolha o tipo de etiqueta na lista ao lado</small>
         </li>
         <li>
-          <small>Modifique os dados das etiquetas pela interface</small>
+          <small>Personalize os dados das etiquetas pela interface</small>
         </li>
         <li>
-          <small>Selecione a impressora de destino</small>
+          <small>Configure a impressora de destino</small>
         </li>
         <li>
           <small>Imprima!</small>

@@ -15,7 +15,7 @@ export default function Home() {
       <img
         src={banner}
         alt="banner"
-        style={{ height: "8rem", marginBottom: "var(--spacing-1)" }}
+        style={{ height: "9rem", marginBottom: "var(--spacing-1)" }}
       />
       <p className="bold center">Impressão de etiquetas padrão ARQ</p>
       <ul

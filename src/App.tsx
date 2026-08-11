@@ -3,6 +3,8 @@ import { HashRouter, Routes, Route, Link } from "react-router-dom";
 import Home from "./views/Home";
 import Exp from "./views/Exp";
 import Rec from "./views/Rec";
+import Location from "./views/Location";
+import LastMile from "./views/LastMile";
 import "./App.css";
 
 import icon from "./assets/icon.png";
@@ -87,6 +89,26 @@ export default function App() {
             </svg>
             Recebimento
           </Link>
+          <Link
+            to="/loc"
+            onClick={() => setCurrentView("/loc")}
+            className={currentView === "/loc" ? "active" : ""}
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="m16.949,2.05c-1.321-1.322-3.079-2.05-4.949-2.05s-3.628.728-4.95,2.05c-2.729,2.729-2.729,7.17.008,9.907l2.495,2.44c.675.66,1.561.99,2.447.99s1.772-.33,2.447-.99l2.502-2.448c1.322-1.322,2.051-3.08,2.051-4.95s-.729-3.627-2.051-4.95Zm-4.949,7.94c-1.657,0-3-1.343-3-3s1.343-3,3-3,3,1.343,3,3-1.343,3-3,3Zm12,6.772c.002.354-.183.682-.485.863l-9.861,5.917c-.51.306-1.082.459-1.653.459s-1.144-.153-1.653-.459L.485,17.625c-.303-.182-.487-.51-.485-.863.002-.353.19-.679.495-.857l4.855-2.842c.1.11.203.219.309.325l2.495,2.439c1.028,1.006,2.395,1.561,3.846,1.561s2.817-.555,3.846-1.561l2.518-2.463c.098-.098.194-.199.287-.301l4.854,2.841c.305.179.493.505.495.857Z" />
+            </svg>
+            Locação
+          </Link>
+          <Link
+            to="/mile"
+            onClick={() => setCurrentView("/mile")}
+            className={currentView === "/mile" ? "active" : ""}
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M8.535,14.464c-.944-.944-2.2-1.464-3.535-1.464s-2.591,.52-3.536,1.464c-1.95,1.949-1.95,5.122,.026,7.096l1.99,1.849c.428,.398,.976,.596,1.524,.596s1.1-.2,1.528-.6l2.001-1.871c.945-.944,1.465-2.2,1.465-3.535s-.52-2.591-1.465-3.536Zm8.945-4.055c.428,.397,.976,.596,1.524,.596s1.101-.2,1.529-.6l2.001-1.871c1.95-1.949,1.95-5.122,0-7.071h0c-.945-.944-2.2-1.464-3.535-1.464s-2.591,.52-3.536,1.464c-1.95,1.949-1.95,5.122,.026,7.096l1.99,1.849Zm6.52,9.59c0,2.206-1.794,4-4,4H11c-.552,0-1-.448-1-1s.448-1,1-1h9c1.103,0,2-.897,2-2s-.897-2-2-2h-5c-2.206,0-4-1.794-4-4,0-1.692,1.072-3.208,2.667-3.772,.522-.185,1.092,.089,1.276,.61,.184,.521-.089,1.092-.61,1.276-.797,.282-1.333,1.04-1.333,1.886,0,1.103,.897,2,2,2h5c2.206,0,4,1.794,4,4Z" />
+            </svg>
+            Last Mile
+          </Link>
 
           <div id="printer-configs">
             <small className="view-subtitle">Configuração da Impressora</small>
@@ -126,6 +148,8 @@ export default function App() {
               element={<Exp printerPort={printerPort} printerIP={printerIP} />}
             />
             <Route path="/rec" element={<Rec />} />
+            <Route path="/loc" element={<Location />} />
+            <Route path="/mile" element={<LastMile />} />
           </Routes>
         </main>
       </div>

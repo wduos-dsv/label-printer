@@ -1,7 +1,7 @@
-export default function Rec() {
+export default function Location() {
   return (
     <div>
-      <h2>Recebimento</h2>
+      <h2>Locação</h2>
       <p>Em breve...</p>
     </div>
   );

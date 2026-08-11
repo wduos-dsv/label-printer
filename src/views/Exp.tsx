@@ -13,6 +13,7 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
   });
   const [orderNumber, setOrderNumber] = useState("");
   const [palletQuantity, setPalletQuantity] = useState(1);
+  const [specificLabelToPrint, setSpecificLabelToPrint] = useState(1);
   const [printRepackLabel, setPrintRepackLabel] = useState(false);
   // const [showModal, setShowModal] = useState(false);
 
@@ -112,6 +113,19 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
           setPalletQuantity(parseInt(event.target.value) || 1)
         }
       />
+      {printMode === "specific" && (
+        <>
+          <small className="view-subtitle">Etiqueta a ser impressa</small>
+          <input
+            type="number"
+            value={specificLabelToPrint}
+            max={30}
+            onChange={(event) =>
+              setSpecificLabelToPrint(parseInt(event.target.value) || 1)
+            }
+          />
+        </>
+      )}
       <small className="view-subtitle">Imprimir etiqueta de Repack</small>
       <div className="flex-btns">
         <button
@@ -129,6 +143,8 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
           Não
         </button>
       </div>
+
+      <div className="status-bar awaiting"></div>
       <button
         className="print-labels-btn"
         onClick={handlePrint}

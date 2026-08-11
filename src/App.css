@@ -33,7 +33,7 @@ header img {
   cursor: pointer;
   transition: 0.2s scale ease-out;
 }
-.control-btns button svg {
+.control-btns > button svg {
   fill: var(--text);
 }
 .minimize-btn,

@@ -106,7 +106,6 @@ input:not([type="button"]) {
 }
 
 .print-labels-btn {
-  margin-top: 1rem;
   width: 100%;
   background-image: linear-gradient(
     45deg,
@@ -128,9 +127,49 @@ input:not([type="button"]) {
   box-shadow: 0 0 15px var(--accent-opaque);
 }
 
+.status-bar {
+  height: 4px;
+  margin-block: 1rem 0.5rem;
+  border-radius: 4px;
+  background-color: var(--gray);
+}
+.status-bar.awaiting {
+  animation: waiting 1s ease-out infinite alternate;
+}
+@keyframes waiting {
+  from {
+    background-color: var(--gray);
+  }
+  to {
+    background-color: var(--gray-1);
+  }
+}
+.status-bar.error {
+  animation: error 1s ease-out infinite alternate;
+}
+@keyframes error {
+  from {
+    background-color: var(--red-opaque);
+  }
+  to {
+    background-color: var(--red);
+  }
+}
+.status-bar.success {
+  animation: success 1s ease-out infinite alternate;
+}
+@keyframes success {
+  from {
+    background-color: var(--green-opaque);
+  }
+  to {
+    background-color: var(--green);
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
-    --text: #212747;
+    --text: #272147;
     --main-window: #f5f5fa;
     --background-color: #ffffff;
   }

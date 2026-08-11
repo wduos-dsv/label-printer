@@ -41,7 +41,7 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
           ip: printerIP,
           port: printerPort,
           municipio: selectedMunicipality,
-          dataExp: selectedDate,
+          dataExp: selectedDate.replace(/-/g, "/"),
           ordem: trimmedOrder,
           totalTags: palletQuantity,
           repack: printRepackLabel ? "Sim" : "Não",
@@ -136,7 +136,10 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
       <input
         type="date"
         value={selectedDate}
-        onChange={(event) => setSelectedDate(event.target.value)}
+        onChange={(event) => {
+          setSelectedDate(event.target.value);
+          console.log(event.target.value.replace(/-/g, "/"));
+        }}
       />
       <small className="view-subtitle">Número da Ordem</small>
       <input

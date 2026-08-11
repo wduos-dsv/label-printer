@@ -25,6 +25,7 @@ export default function App() {
     async function loadPrinters() {
       try {
         // Invoke the IPC handler exposed via preload
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const printerList = await (window as any).ipcRenderer.invoke(
           "get-printers",
         );
@@ -58,6 +59,7 @@ export default function App() {
             <button
               className="minimize-btn"
               onClick={() =>
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (window as any).ipcRenderer.send("window-minimize")
               }
             >
@@ -68,6 +70,7 @@ export default function App() {
             <button
               className="maximize-btn"
               onClick={() =>
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (window as any).ipcRenderer.send("window-maximize")
               }
             >
@@ -77,6 +80,7 @@ export default function App() {
             </button>
             <button
               className="close-btn"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onClick={() => (window as any).ipcRenderer.send("window-close")}
             >
               <svg viewBox="0 0 24 24">
@@ -121,9 +125,9 @@ export default function App() {
           <div id="printer-picker">
             <small className="view-subtitle">Seleção de Impressora</small>
             {loading ? (
-              <p>Carregando impressoras...</p>
+              <small>Carregando impressoras...</small>
             ) : printers.length === 0 ? (
-              <p>Nenhuma impressora encontrada.</p>
+              <small className="err bold">Sem impressoras conectadas</small>
             ) : (
               <>
                 <select

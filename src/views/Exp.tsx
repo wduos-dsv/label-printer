@@ -28,6 +28,7 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
     }
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (window as any).ipcRenderer.invoke(
         "print-label",
         selectedPrinter,
@@ -144,12 +145,7 @@ export default function Exp({ selectedPrinter }: { selectedPrinter: string }) {
         </button>
       </div>
 
-      <div className="status-bar awaiting"></div>
-      <button
-        className="print-labels-btn"
-        onClick={handlePrint}
-        style={{ padding: "8px 16px" }}
-      >
+      <button className="print-labels-btn" onClick={handlePrint}>
         Iniciar Impressão
       </button>
 

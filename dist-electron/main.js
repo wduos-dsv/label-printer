@@ -15,10 +15,10 @@ function createWindow() {
   win = new BrowserWindow({
     frame: false,
     icon: path.join(process.env.VITE_PUBLIC, "icon.png"),
-    height: 575,
-    minHeight: 575,
-    width: 757,
-    minWidth: 757,
+    height: 500,
+    minHeight: 500,
+    width: 700,
+    minWidth: 700,
     webPreferences: {
       preload: path.join(__dirname$1, "preload.mjs")
     }
@@ -58,43 +58,55 @@ function sendZplOverTcp(ip, port, zplData) {
     });
   });
 }
-function generateRegularZpl(cfg, currentIdx, totalTagsFormatted) {
+function generateRegularZpl(cfg, currentIdx, totalLabelsFormatted) {
   const barcodeCounter = String(currentIdx).padStart(3, "0");
   const printCounter = String(currentIdx).padStart(2, "0");
-  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipio.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.dataExp}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.ordem}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${printCounter}/${totalTagsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDEXP${cfg.ordem}${barcodeCounter}ARQ^FS^FT16,325^A0N,45,46^FDEXP${cfg.ordem}${barcodeCounter}ARQ^FS^PQ1,0,1,Y^XZ`;
+  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipality.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.expDate}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.order}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${printCounter}/${totalLabelsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDEXP${cfg.order}${barcodeCounter}ARQ^FS^FT16,325^A0N,45,46^FDEXP${cfg.order}${barcodeCounter}ARQ^FS^PQ1,0,1,Y^XZ`;
 }
-function generateRepackZpl(cfg, totalTagsFormatted) {
-  const repackI = cfg.totalTags + 1;
+function generateRepackZpl(cfg, totalLabelsFormatted) {
+  const repackI = cfg.totalLabels + 1;
   const repackStr = String(repackI).padStart(2, "0");
   const repackBarcode = String(repackI).padStart(3, "0");
-  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipio.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.dataExp}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.ordem}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${repackStr}/${totalTagsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDREPACK${cfg.ordem}${repackBarcode}^FS^FT16,325^A0N,45,46^FDREPACK${cfg.ordem}${repackBarcode}^FS^PQ1,0,1,Y^XZ`;
+  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipality.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.expDate}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.order}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${repackStr}/${totalLabelsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDREPACK${cfg.order}${repackBarcode}^FS^FT16,325^A0N,45,46^FDREPACK${cfg.order}${repackBarcode}^FS^PQ1,0,1,Y^XZ`;
 }
-function generateFinalZpl(cfg, totalTagsFormatted) {
-  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipio.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.dataExp}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.ordem}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD00/${totalTagsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FD${cfg.ordem}^FS^FT16,325^A0N,45,46^FD${cfg.ordem}^FS^PQ1,0,1,Y^XZ`;
+function generateFinalZpl(cfg, totalLabelsFormatted) {
+  return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipality.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.expDate}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.order}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD00/${totalLabelsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FD${cfg.order}^FS^FT16,325^A0N,45,46^FD${cfg.order}^FS^PQ1,0,1,Y^XZ`;
 }
 ipcMain.handle("print-exp-full-range", async (_, config) => {
   try {
     const ip = config.ip || "10.55.22.240";
     const port = config.port || 9100;
-    const totalTagsFormatted = String(config.totalTags).padStart(2, "0");
-    for (let i = 1; i <= config.totalTags; i++) {
-      const zpl = generateRegularZpl(config, i, totalTagsFormatted);
+    const totalLabelsFormatted = String(config.totalLabels).padStart(2, "0");
+    for (let i = 1; i <= config.totalLabels; i++) {
+      const zpl = generateRegularZpl(config, i, totalLabelsFormatted);
       await sendZplOverTcp(ip, port, zpl);
     }
     if (config.repack === "Sim") {
-      const zpl = generateRepackZpl(config, totalTagsFormatted);
+      const zpl = generateRepackZpl(config, totalLabelsFormatted);
       await sendZplOverTcp(ip, port, zpl);
     }
-    const finalZpl = generateFinalZpl(config, totalTagsFormatted);
+    const finalZpl = generateFinalZpl(config, totalLabelsFormatted);
     await sendZplOverTcp(ip, port, finalZpl);
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
   }
 });
-ipcMain.handle("get-printers", async () => {
-  if (!win) return [];
-  return await win.webContents.getPrintersAsync();
+ipcMain.handle("print-exp-specific-label", async (_, config) => {
+  try {
+    const ip = config.ip || "10.55.22.240";
+    const port = config.port || 9100;
+    const totalLabelsFormatted = String(config.totalLabels).padStart(2, "0");
+    const zpl = generateRegularZpl(
+      config,
+      config.labelToPrint,
+      totalLabelsFormatted
+    );
+    await sendZplOverTcp(ip, port, zpl);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 });
 ipcMain.on("window-minimize", () => {
   win == null ? void 0 : win.minimize();

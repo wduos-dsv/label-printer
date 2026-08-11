@@ -40,10 +40,10 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
         const config = {
           ip: printerIP,
           port: printerPort,
-          municipio: selectedMunicipality,
-          dataExp: selectedDate.replace(/-/g, "/"),
-          ordem: trimmedOrder,
-          totalTags: palletQuantity,
+          municipality: selectedMunicipality,
+          expDate: selectedDate.replace(/-/g, "/"),
+          order: trimmedOrder,
+          totalLabels: palletQuantity,
           repack: printRepackLabel ? "Sim" : "Não",
         };
 
@@ -67,25 +67,34 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
       return;
     }
 
-    /* modificar!
     try {
+      const config = {
+        ip: printerIP,
+        port: printerPort,
+        municipality: selectedMunicipality,
+        expDate: selectedDate.replace(/-/g, "/"),
+        order: trimmedOrder,
+        totalLabels: palletQuantity,
+        labelToPrint: specificLabelToPrint,
+      };
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result = await (window as any).ipcRenderer.invoke(
         "print-exp-specific-label",
-        selectedPrinter,
+        config,
       );
       if (result.success) {
         setPrintStatus("success");
-        setPrintStatusMessage("Etiquetas enviadas para fila de impressão!");
+        setPrintStatusMessage("Impressão concluída com sucesso!");
       } else {
         setPrintStatus("error");
-        setPrintStatusMessage("Erro: " + result.error);
+        setPrintStatusMessage("Erro! " + result.error);
       }
     } catch (error) {
       setPrintStatus("error");
       setPrintStatusMessage(`Erro de impressão: ${error}`);
       console.error("Erro na comunicação de impressão:", error);
-    } */
+    }
   };
 
   return (
@@ -168,30 +177,34 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
           <input
             type="number"
             value={specificLabelToPrint}
-            max={30}
+            max={palletQuantity}
             onChange={(event) =>
               setSpecificLabelToPrint(parseInt(event.target.value) || 1)
             }
           />
         </>
       )}
-      <small className="view-subtitle">Imprimir etiqueta de Repack</small>
-      <div className="flex-btns">
-        <button
-          type="button"
-          onClick={() => setPrintRepackLabel(true)}
-          className={printRepackLabel ? "active" : ""}
-        >
-          Sim
-        </button>
-        <button
-          type="button"
-          onClick={() => setPrintRepackLabel(false)}
-          className={printRepackLabel ? "" : "active"}
-        >
-          Não
-        </button>
-      </div>
+      {printMode === "full" && (
+        <>
+          <small className="view-subtitle">Imprimir etiqueta de Repack</small>
+          <div className="flex-btns">
+            <button
+              type="button"
+              onClick={() => setPrintRepackLabel(true)}
+              className={printRepackLabel ? "active" : ""}
+            >
+              Sim
+            </button>
+            <button
+              type="button"
+              onClick={() => setPrintRepackLabel(false)}
+              className={printRepackLabel ? "" : "active"}
+            >
+              Não
+            </button>
+          </div>
+        </>
+      )}
 
       <button className="print-labels-btn" onClick={handlePrint}>
         Iniciar Impressão

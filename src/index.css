@@ -17,14 +17,14 @@
   --red: #ff6479;
   --red-opaque: #ff647977;
   --accent: #646cff;
-  --accent-dull-1: #5056cf;
-  --accent-dull: #5157c9;
+  --accent-dull-1: #6066dd;
+  --accent-dull: #555cd4;
   --accent-opaque: #646cff42;
   --accent-secondary: #535bf2;
   --accent-tertiary: #747bff;
-  --main-window: #1b1b20;
-  --background-color: #212125;
-  --gray-2: #a2a2d4;
+  --main-window: #18181d;
+  --background-color: #232329;
+  --gray-2: #8d8ddb;
   --gray-1: #40404b;
   --gray: #2d2d35;
   --text: #ebe7ffde;
@@ -84,6 +84,42 @@ input:focus-visible {
 
 input:not([type="button"]) {
   width: calc(100% - var(--spacing) - var(--spacing-3));
+}
+
+input[type="checkbox"] {
+  position: relative;
+  margin: 0;
+  height: 1rem;
+  width: 2rem;
+  border-radius: var(--radius);
+}
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1rem;
+  width: 2rem;
+  border-radius: var(--radius);
+  background-color: var(--background-color);
+}
+input[type="checkbox"]:checked:after {
+  background-color: var(--accent);
+}
+input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  top: 0.2rem;
+  right: 1.2rem;
+  height: 0.6rem;
+  width: 0.6rem;
+  border-radius: var(--radius);
+  background-color: white;
+  transition: right 0.2s ease-out;
+  z-index: 5;
+}
+input[type="checkbox"]:checked::before {
+  right: 0.2rem;
 }
 
 .dim {

@@ -53,7 +53,7 @@ export default function Location({ printerPort, printerIP }: PrinterInfo) {
         type="text"
         maxLength={10}
         onChange={(e) => {
-          setPositionCode(e.target.value);
+          setPositionCode(e.target.value.toUpperCase());
         }}
       />
 

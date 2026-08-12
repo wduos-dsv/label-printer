@@ -57,12 +57,11 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
           setPrintStatusMessage("Impressão concluída com sucesso!");
         } else {
           setPrintStatus("error");
-          setPrintStatusMessage("Erro! " + result.error);
+          setPrintStatusMessage(`Erro! ${result.error}`);
         }
       } catch (error) {
         setPrintStatus("error");
-        setPrintStatusMessage(`Erro de impressão: ${error}`);
-        console.error("Erro na comunicação de impressão:", error);
+        setPrintStatusMessage(`Erro de comunicação: ${error}`);
       }
       return;
     }
@@ -206,7 +205,11 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
         </>
       )}
 
-      <button className="print-labels-btn" onClick={handlePrint}>
+      <button
+        className="print-labels-btn"
+        onClick={handlePrint}
+        disabled={printStatus === "awaiting"}
+      >
         Iniciar Impressão
       </button>
       {printStatus === "success" ? (
@@ -219,9 +222,7 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
         </small>
       ) : printStatus === "awaiting" ? (
         <small className="mrg-top-3 text-xs center dim hold">Aguarde...</small>
-      ) : (
-        <small className="mrg-top-3 text-xs center dim"></small>
-      )}
+      ) : null}
     </div>
   );
 }

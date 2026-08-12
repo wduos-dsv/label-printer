@@ -25,6 +25,7 @@
   --gray-1: #40404b;
   --gray: #2d2d35;
   --text: #ebe7ffde;
+  --shadow: 0 0 6px rgba(0, 0, 0, 0.15);
   --radius: 16px;
   --radius-1: 8px;
   --radius-2: 4px;
@@ -85,6 +86,9 @@ input:not([type="button"]) {
 .dim {
   opacity: 0.5;
   color: inherit;
+}
+.accent {
+  color: var(--accent);
 }
 .err {
   color: var(--red);
@@ -174,6 +178,7 @@ input:not([type="button"]) {
     --text: #272147;
     --main-window: #f0f0f7;
     --background-color: #ffffff;
+    --shadow: 0 0 6px rgba(0, 0, 0, 0.05);
   }
 
   button:not(.control-btns button):hover,

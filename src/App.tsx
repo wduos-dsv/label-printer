@@ -47,7 +47,7 @@ export default function App() {
         </svg>
       ),
       title: "Recebimento",
-      element: <Rec />,
+      element: <Rec printerPort={printerPort} printerIP={printerIP} />,
     },
     {
       url: "/loc",

@@ -3,6 +3,7 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import * as net from "node:net";
+import * as crypto from "node:crypto"; // Needed for REC LPNs generation
 
 createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -46,6 +47,7 @@ function createWindow() {
   }
 }
 
+// helpers
 function sendZplOverTcp(
   ip: string,
   port: number,
@@ -83,7 +85,18 @@ function sendZplOverTcp(
   });
 }
 
-function generateRegularZpl(
+function getUnique5DigitCode(): string {
+  const timestampStr = String(Date.now() / 1000);
+  const hashHex = crypto
+    .createHash("sha256")
+    .update(timestampStr)
+    .digest("hex");
+  const uniqueInt = BigInt("0x" + hashHex);
+  const uniqueStr = uniqueInt.toString();
+  return uniqueStr.slice(-5);
+}
+
+function genExpLabelZpl(
   cfg: any,
   currentIdx: number,
   totalLabelsFormatted: string,
@@ -92,16 +105,28 @@ function generateRegularZpl(
   const printCounter = String(currentIdx).padStart(2, "0");
   return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipality.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.expDate}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.order}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${printCounter}/${totalLabelsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDEXP${cfg.order}${barcodeCounter}ARQ^FS^FT16,325^A0N,45,46^FDEXP${cfg.order}${barcodeCounter}ARQ^FS^PQ1,0,1,Y^XZ`;
 }
-
-function generateRepackZpl(cfg: any, totalLabelsFormatted: string): string {
+function genExpLabelRepackZpl(cfg: any, totalLabelsFormatted: string): string {
   const repackI = cfg.totalLabels + 1;
   const repackStr = String(repackI).padStart(2, "0");
   const repackBarcode = String(repackI).padStart(3, "0");
   return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipality.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.expDate}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.order}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD${repackStr}/${totalLabelsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FDREPACK${cfg.order}${repackBarcode}^FS^FT16,325^A0N,45,46^FDREPACK${cfg.order}${repackBarcode}^FS^PQ1,0,1,Y^XZ`;
 }
-
-function generateFinalZpl(cfg: any, totalLabelsFormatted: string): string {
+function genExpOrderOnlyZpl(cfg: any, totalLabelsFormatted: string): string {
   return `^XA^MMT^PW783^LL384^LS0^FT339,73^A0N,62,61^FH\\^CI28^FD${cfg.municipality.toUpperCase()}^FS^CI27^FT16,71^A0N,62,61^FH\\^CI28^FDEXPEDIÇÃO:^FS^CI27^FT16,134^A0N,45,46^FH\\^CI28^FDDATA:^FS^CI27^FT138,134^A0N,45,46^FH\\^CI28^FD${cfg.expDate}^FS^CI27^FT16,185^A0N,45,46^FH\\^CI28^FDPEDIDO:^FS^CI27^FT183,185^A0N,45,46^FH\\^CI28^FD${cfg.order}^FS^CI27^FO2,7^GB771,369,4^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYawfd6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUc+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^FT515,177^A0N,102,101^FD00/${totalLabelsFormatted}^FS^BY2,2,70^FO16,215^BCN,70,N,N,N^FD${cfg.order}^FS^FT16,325^A0N,45,46^FD${cfg.order}^FS^PQ1,0,1,Y^XZ`;
+}
+
+function genRecLabelZpl(
+  uniqueCode: string,
+  counter: number,
+  manualCode?: string,
+  mode?: string,
+): string {
+  const barcodePayload =
+    mode === "sequential"
+      ? `REC${uniqueCode}${String(counter).padStart(3, "0")}ARQ`
+      : `REC${manualCode}ARQ`;
+
+  return `^XA^MMT^PW783^LL384^LS0^FO2,7^GB771,369,4^FS^FT300,145^A0N,102,101^FH\\^CI28^FDLPN^FS^CI27^FO105,170^BY3^BCN,100,N,N,N^FD${barcodePayload}^FS^FT220,320^A0N,48,46^FD${barcodePayload}^FS^FO659,333^GFA,373,512,16,:Z64:eJxlkD1qxDAQhZ9xDIYUZgvXOUIOsIVcKL0L6z6CbQx7Cd8g7bJFHMhFVPoIZgWezJMES8jDI0v+9Dw/gAc08gq8WAtYard/6w4mylJHiQ+gPvTcOzc2TgVUE7nI8S6qb3TkRD2XAU3ia9GC7pb9WSOaUx+YryK7n9cd3Y4kMvQjnySJAXjdYUI+9+Rq7lljyxK2lskT149MMWhyR26WVMK9/sLqn9xVDo4/WwNbEPGHF3JX+MAb9Aeco/Yf4uWB4h9PJ/KpcLOhlSA/B7KfeZV/ZL5AW9eX+bxlf5V56kLBdpUwzxLeZEeZ38Ao/CxRvMbSxYAyP15Ck9pL8wfr7yQU//SHc/JmvaNO7f/TLySEld0=:7C7C^PQ1,0,1,Y^XZ`;
 }
 
 ipcMain.handle("print-exp-full-range", async (_, config) => {
@@ -111,16 +136,16 @@ ipcMain.handle("print-exp-full-range", async (_, config) => {
     const totalLabelsFormatted = String(config.totalLabels).padStart(2, "0");
 
     for (let i = 1; i <= config.totalLabels; i++) {
-      const zpl = generateRegularZpl(config, i, totalLabelsFormatted);
+      const zpl = genExpLabelZpl(config, i, totalLabelsFormatted);
       await sendZplOverTcp(ip, port, zpl);
     }
 
     if (config.repack === "Sim") {
-      const zpl = generateRepackZpl(config, totalLabelsFormatted);
+      const zpl = genExpLabelRepackZpl(config, totalLabelsFormatted);
       await sendZplOverTcp(ip, port, zpl);
     }
 
-    const finalZpl = generateFinalZpl(config, totalLabelsFormatted);
+    const finalZpl = genExpOrderOnlyZpl(config, totalLabelsFormatted);
     await sendZplOverTcp(ip, port, finalZpl);
 
     return { success: true };
@@ -135,7 +160,7 @@ ipcMain.handle("print-exp-specific-label", async (_, config) => {
     const port = config.port || 9100;
     const totalLabelsFormatted = String(config.totalLabels).padStart(2, "0");
 
-    const zpl = generateRegularZpl(
+    const zpl = genExpLabelZpl(
       config,
       config.labelToPrint,
       totalLabelsFormatted,
@@ -143,6 +168,34 @@ ipcMain.handle("print-exp-specific-label", async (_, config) => {
     await sendZplOverTcp(ip, port, zpl);
 
     return { success: true };
+  } catch (error: unknown) {
+    return { success: false, error: (error as Error).message };
+  }
+});
+
+ipcMain.handle("print-rec-labels", async (_, config) => {
+  try {
+    const ip = config.ip || "10.55.22.240";
+    const port = config.port || 9100;
+    const mode = config.mode;
+    const totalLabels = config.totalLabels || 1;
+    const manualCode = config.manualCode || "";
+
+    let uniqueCode = "";
+    if (mode === "sequential") {
+      uniqueCode = getUnique5DigitCode();
+    }
+
+    let allLabelsZpl =
+      "~CT~~CD,~CC^~CT~\n^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ\n";
+
+    for (let i = 1; i <= totalLabels; i++) {
+      allLabelsZpl += genRecLabelZpl(uniqueCode, i, manualCode, mode);
+    }
+
+    await sendZplOverTcp(ip, port, allLabelsZpl);
+
+    return { success: true, uniqueCode };
   } catch (error: unknown) {
     return { success: false, error: (error as Error).message };
   }

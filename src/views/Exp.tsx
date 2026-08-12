@@ -206,7 +206,11 @@ export default function Exp({ printerPort, printerIP }: printerInfo) {
       )}
 
       <button
-        className="print-labels-btn"
+        className={
+          printStatus === "awaiting"
+            ? "print-labels-btn disabled"
+            : "print-labels-btn"
+        }
         onClick={handlePrint}
         disabled={printStatus === "awaiting"}
       >

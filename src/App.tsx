@@ -57,7 +57,7 @@ export default function App() {
         </svg>
       ),
       title: "Locação",
-      element: <Location />,
+      element: <Location printerPort={printerPort} printerIP={printerIP} />,
     },
     {
       url: "/mile",

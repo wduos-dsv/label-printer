@@ -17,11 +17,14 @@
   --red: #ff6479;
   --red-opaque: #ff647977;
   --accent: #646cff;
+  --accent-dull-1: #5056cf;
+  --accent-dull: #5157c9;
   --accent-opaque: #646cff42;
   --accent-secondary: #535bf2;
   --accent-tertiary: #747bff;
   --main-window: #1b1b20;
   --background-color: #212125;
+  --gray-2: #a2a2d4;
   --gray-1: #40404b;
   --gray: #2d2d35;
   --text: #ebe7ffde;
@@ -171,6 +174,15 @@ input:not([type="button"]) {
     var(--accent-secondary)
   );
   box-shadow: 0 0 15px var(--accent-opaque);
+}
+.print-labels-btn.disabled {
+  background-image: linear-gradient(
+    to right,
+    var(--accent-dull),
+    var(--accent-dull-1),
+    var(--accent-dull)
+  );
+  color: var(--gray-2);
 }
 
 @media (prefers-color-scheme: light) {

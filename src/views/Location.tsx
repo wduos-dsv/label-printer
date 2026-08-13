@@ -22,6 +22,7 @@ export default function Location({ printerPort, printerIP }: PrinterInfo) {
         ip: printerIP,
         port: printerPort,
         position: positionCode.trim(),
+        hasQR: includeQR,
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -51,7 +52,7 @@ export default function Location({ printerPort, printerIP }: PrinterInfo) {
       <small className="view-subtitle">Código da posição</small>
       <input
         type="text"
-        maxLength={10}
+        maxLength={9}
         onChange={(e) => {
           setPositionCode(e.target.value.toUpperCase());
         }}

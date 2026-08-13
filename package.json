@@ -1,7 +1,9 @@
 {
   "name": "label-printer",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "authon": "Wendel Duarte dos Santos",
+  "description": "Impressão de etiquetas DSV",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -31,5 +33,43 @@
     "vite-plugin-electron": "^0.28.6",
     "vite-plugin-electron-renderer": "^0.14.5"
   },
-  "main": "dist-electron/main.js"
+  "main": "dist-electron/main.js",
+  "build": {
+    "appId": "com.wduos.labelprinter",
+    "productName": "Label Printer",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**",
+      "dist-electron/**"
+    ],
+    "win": {
+      "certificateFile": "build/cert.pfx",
+      "certificatePassword": "yourpassword",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.icns"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "shortcutName": "Label Printer"
+    }
+  }
 }

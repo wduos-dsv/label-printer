@@ -1,9 +1,12 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import * as net from "node:net";
 import * as crypto from "node:crypto"; // Needed for REC LPNs generation
+import { autoUpdater } from "electron-updater";
+
+autoUpdater.logger = console;
 
 createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -45,7 +48,37 @@ function createWindow() {
   } else {
     win.loadFile(path.join(RENDERER_DIST, "index.html"));
   }
+
+  win.once("ready-to-show", () => {
+    if (!VITE_DEV_SERVER_URL) {
+      autoUpdater.checkForUpdatesAndNotify();
+    }
+  });
 }
+
+autoUpdater.on("update-available", () => {
+  dialog.showMessageBox(win!, {
+    type: "info",
+    title: "Atualização Disponível",
+    message:
+      "Uma nova versão do Label Printer está sendo baixada em segundo plano.",
+    buttons: ["OK"],
+  });
+});
+
+autoUpdater.on("update-downloaded", () => {
+  dialog
+    .showMessageBox(win!, {
+      type: "info",
+      title: "Atualização Pronta",
+      message:
+        "O download foi concluído. O aplicativo será reiniciado para instalar a atualização.",
+      buttons: ["Reiniciar Agora"],
+    })
+    .then(() => {
+      autoUpdater.quitAndInstall();
+    });
+});
 
 // helpers
 function sendZplOverTcp(

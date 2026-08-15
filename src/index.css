@@ -60,7 +60,8 @@ body {
 }
 
 button:not(.control-btns button),
-input {
+input,
+select {
   border-radius: var(--radius-2);
   border: 2px solid transparent;
   padding: var(--spacing-3) var(--spacing-2);
@@ -114,7 +115,7 @@ input[type="checkbox"]::before {
   height: 0.6rem;
   width: 0.6rem;
   border-radius: var(--radius);
-  background-color: white;
+  background-color: var(--text);
   transition: right 0.2s ease-out;
   z-index: 5;
 }

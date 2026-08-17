@@ -85,16 +85,20 @@ function sendZplOverTcp(
   ip: string,
   port: number,
   zplData: string,
+  timeoutMs: number = 5000,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const client = new net.Socket();
-    client.setTimeout(5000);
+
+    if (timeoutMs > 0) {
+      client.setTimeout(timeoutMs);
+    }
 
     client.connect(port, ip, () => {
       client.write(zplData, "utf-8", () => {
         setTimeout(() => {
           client.end();
-        }, 300); // Small delay matching Python's time.sleep(0.3)
+        }, 500);
       });
     });
 
@@ -103,14 +107,16 @@ function sendZplOverTcp(
       reject(err);
     });
 
-    client.on("timeout", () => {
-      client.destroy();
-      reject(
-        new Error(
-          "Tempo de conexão esgotado. Verifique a rede ou configurações da impressora.",
-        ),
-      );
-    });
+    if (timeoutMs > 0) {
+      client.on("timeout", () => {
+        client.destroy();
+        reject(
+          new Error(
+            "Tempo de conexão esgotado. Verifique a rede ou configurações da impressora.",
+          ),
+        );
+      });
+    }
 
     client.on("close", () => {
       resolve();
@@ -191,7 +197,7 @@ ipcMain.handle("print-exp-full-range", async (_, config) => {
     }
 
     const finalZpl = genExpOrderOnlyZpl(config, totalLabelsFormatted);
-    await sendZplOverTcp(ip, port, finalZpl);
+    await sendZplOverTcp(ip, port, finalZpl, 0);
 
     return { success: true };
   } catch (error: unknown) {
@@ -238,7 +244,7 @@ ipcMain.handle("print-rec-labels", async (_, config) => {
       allLabelsZpl += genRecLabelZpl(uniqueCode, i, manualCode, mode);
     }
 
-    await sendZplOverTcp(ip, port, allLabelsZpl);
+    await sendZplOverTcp(ip, port, allLabelsZpl, 0);
 
     return { success: true, uniqueCode };
   } catch (error: unknown) {

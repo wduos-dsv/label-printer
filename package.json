@@ -1,7 +1,7 @@
 {
   "name": "label-printer",
   "private": true,
-  "version": "1.2.1",
+  "version": "2.0.0",
   "author": "Wendel Duarte dos Santos <wendel.santos1@dsv.com>",
   "description": "Impressão de etiquetas DSV",
   "type": "module",

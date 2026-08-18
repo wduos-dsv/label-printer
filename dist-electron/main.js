@@ -15111,6 +15111,21 @@ ipcMain.handle("print-huawei-exp-label", async (_, config) => {
     return { success: false, error: error2.message };
   }
 });
+ipcMain.handle("print-sku-label", async (_, config) => {
+  try {
+    const ip = config.ip || "10.55.22.240";
+    const port = config.port || 9100;
+    const sku = config.sku;
+    const description = config.description;
+    for (let i = 1; i <= config.totalLabels; i++) {
+      const zpl = `^XA~TA000~JSN^LT0^MNW^MTT^LH0,0^PR4,4~SD10^CI27^MMT^PW815^LL416^LS0^FT50,345^AAN,27,15^FH^FD240${sku}^FS^BY3,3,81^FT50,322^BCN,,N,N^FH^FD240${sku}^FS^FT50,80^A0N,51,53^FH^CI28^FDSOUZA CRUZ LTDA^FS^CI27^FT50,227^A0N,34,33^FH^CI28^FD${description}^FS^CI27^FT50,159^A0N,51,51^FH^FD${sku}^FS^CI27^PQ1,0,1,Y^XZ`;
+      await sendZplOverTcp(ip, port, zpl);
+    }
+    return { success: true };
+  } catch (error2) {
+    return { success: false, error: error2.message };
+  }
+});
 ipcMain.on("window-minimize", () => {
   win == null ? void 0 : win.minimize();
 });

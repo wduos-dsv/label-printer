@@ -5,6 +5,7 @@ export default function Home() {
     <div
       className="Home"
       style={{
+        position: "relative",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -35,6 +36,19 @@ export default function Home() {
           <small>Imprima!</small>
         </li>
       </ul>
+      <small
+        className="watermark"
+        style={{
+          position: "absolute",
+          bottom: "2rem",
+          left: "50%",
+          fontSize: ".7rem",
+          opacity: 0.2,
+          transform: "translateX(-50%)",
+        }}
+      >
+        Desenvolvido por Wendel Duarte
+      </small>
     </div>
   );
 }

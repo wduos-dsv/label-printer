@@ -180,6 +180,16 @@ function genPositionLabelZpl(
   return `~CT~~CD,~CC^~CT~^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^PR6,6~SD15^JUS^LRN^CI27^PA0,1,1,0^XZ^XA^MMT^PW799^LL719^LS0^FO13,34^GB773,673,8^FS^FO703,50^GFA,789,2544,12,:Z64:eJy1lkGO2zAMRWUEQQrMwpt61YUP4oXcG3hhnaaL5ig9RhYDO0cp0AvM0rAGVUmJEr/jBE2L1gMYwsPnJ2WJzBjz++cjrO1Z100P/AJ8BB40oHEa0IUF+Ah6DWicBth5vgB3oC8BzHOA9cEvwB3owzWtj8yHtD7M9LyKyD0TQAnKHp4K4AwXCBgh4KfRgMwrSrAaCMjrVvUxIK+reZ4MBJR1rXpTAT/4+xz1DXDwr8C/hnrwbKD+CvZVw34b4HAC+N1YHr6XTWX7yqs9ytv78ug+aTHlVEBegfxE9ngoAxR/BZ732urt4U0Nhat88ym397/I6TJQMR8y76mmPvH5bGpJ0Tj14v7KLUC8yi1gPW3Np50JH5LenEi/CC9bszPZyx6Ej6LnL/ouvJxXRzx/IuSkL/d5w2du4XQCwt1d/WfhnlKcv66FG9Abq/r4NcTf2GnHH+ipfk6x9/lH/rF+Y9f/5c8fB+p3qv8RVO+U8/0v/pHLeYVbfeLcXsYumY8y7dsHzdtqe214nS+P2Q63A0xP7K9dP+J0mGUd+7pPawsBOAdeKIF/14KyUdQH8HHgT02W80qCKspTAuFDrp/+3kpa4aekX255nfxfhY+NFFTzfCj95cqPYcu1vwS5PwMHJR7eOLmcV89FSX994x+AqXCT+/FK79JfhXdxZHxBnu8bv4GX+8nvaccf6X18r0/r/9C/i7zb+zz2P8H8OcL8aW/mlfavD+uO7+eb9u8z8014nD/b+flX/i3ojzBvD6v5hP8/5OcXll0rCA==:5FF3^FPH,3^FT450,718^A0B,${fontSize},${fontSize}^FB718,1,35,C^FH\^CI28^FD${position}^FS^CI27^PQ1,0,1,Y^XZ`;
 }
 
+function genHuaweiExpZpl(
+  destination: string,
+  nf: number,
+  packingList: string,
+  thisLabel: number,
+  totalLabels: number,
+): string {
+  return `^XA~TA000~JSN^LT0^MNW^MTT^LH0,0^PR4,4~SD10^CI27^MMT^PW815^LL416^LS0^FT48,71^A0N,46,46^FH\^CI28^FDDESTINO:^FS^CI27^FO29,18^GB772,381,6^FS^FO48,336^GFA,305,688,16,:Z64:eJx90c2NwyAQBeCxfMiREiiF0vB2RilOB0R7QVrE5L2ZJLZQvBwsPgvmD5H/V1QdsipWg1JL2JVAj49rpHUTyWb7uCu3PZuLiJqHe4d3P/rVVRYtcTKTei3wag7u3GDklNu7Vuzo9eUOs6XFHWcPCcN69t6CGVHEqwPiyQ2XEQJR3R1OJw8Ug8OXVhSf68nL4V/6R3eMBF7QKd5hO7yz6U3vJ6PV/MA44HXy7eX0h3HAgVOj1Z3oYLbh4jcfaIuXFhpXhntM7vRAiu5udD9cab5Wcxe6fuxRivc9ryc4jW7G:3FF8^FT234,71^A0N,46,46^FH\^CI28^FD${destination}^FS^CI27^FT48,118^A0N,46,46^FH\^CI28^FDNF:^FS^CI27^FT119,118^A0N,46,46^FH\^CI28^FD${nf}^FS^CI27^BY3,3,57^FT48,186^BCN,,N,N^FH\^FD>:${nf}^FS^FT48,247^A0N,46,46^FH\^CI28^FDPEDIDO:^FS^CI27^FT209,247^A0N,46,46^FH\^CI28^FD${packingList}^FS^CI27^BY2,3,57^FT48,318^BCN,,N,N^FH\^FD>:${packingList}^FS^FT663,371^A0N,32,33^FH\^CI28^FDVOL: ${thisLabel}/${totalLabels}^FS^CI27^PQ1,0,1,Y^XZ`;
+}
+
 ipcMain.handle("print-exp-full-range", async (_, config) => {
   try {
     const ip = config.ip || "10.55.22.240";
@@ -263,6 +273,26 @@ ipcMain.handle("print-position-label", async (_, config) => {
     const zpl = genPositionLabelZpl(position, hasQR, fontSize);
 
     await sendZplOverTcp(ip, port, zpl);
+
+    return { success: true };
+  } catch (error: unknown) {
+    return { success: false, error: (error as Error).message };
+  }
+});
+
+ipcMain.handle("print-huawei-exp-label", async (_, config) => {
+  try {
+    const ip = config.ip || "10.55.22.240";
+    const port = config.port || 9100;
+    const destination = config.destination;
+    const nf = config.nfNumber;
+    const packingList = config.packingList;
+    const totalLabels = config.totalLabels;
+
+    for (let i = 1; i <= config.totalLabels; i++) {
+      const zpl = genHuaweiExpZpl(destination, nf, packingList, i, totalLabels);
+      await sendZplOverTcp(ip, port, zpl);
+    }
 
     return { success: true };
   } catch (error: unknown) {

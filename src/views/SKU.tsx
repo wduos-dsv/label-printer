@@ -9,6 +9,9 @@ export default function SKU({ printerPort, printerIP }: printerInfo) {
   const [sku, setSku] = useState("");
   const [description, setDescription] = useState("");
   const [totalLabels, setTotalLabels] = useState(1);
+  const [lot, setLot] = useState("");
+  const [expYear, setExpYear] = useState("");
+  const [expMonth, setExpMonth] = useState("");
 
   const [printStatus, setPrintStatus] = useState<
     "none" | "success" | "error" | "awaiting"
@@ -25,6 +28,9 @@ export default function SKU({ printerPort, printerIP }: printerInfo) {
         sku,
         description,
         totalLabels,
+        lot,
+        expYear,
+        expMonth,
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,8 +60,8 @@ export default function SKU({ printerPort, printerIP }: printerInfo) {
         type="text"
         placeholder="10215610"
         value={sku}
-        maxLength={40}
-        onChange={(e) => setSku(e.target.value.slice(0, 40))}
+        maxLength={8}
+        onChange={(e) => setSku(e.target.value.slice(0, 8))}
       />
       <small className="view-subtitle">Descrição</small>
       <input
@@ -64,6 +70,30 @@ export default function SKU({ printerPort, printerIP }: printerInfo) {
         maxLength={40}
         value={description}
         onChange={(e) => setDescription(e.target.value.slice(0, 40))}
+      />
+      <small className="view-subtitle">Lote</small>
+      <input
+        type="text"
+        placeholder="Inserir Lote"
+        maxLength={8}
+        value={lot}
+        onChange={(e) => setLot(e.target.value.slice(0, 8))}
+      />
+      <small className="view-subtitle">Ano de vencimento</small>
+      <input
+        type="text"
+        placeholder="2028"
+        maxLength={4}
+        value={expYear}
+        onChange={(e) => setExpYear(e.target.value.slice(0, 4))}
+      />
+      <small className="view-subtitle">Mês de vencimento</small>
+      <input
+        type="text"
+        placeholder="05"
+        maxLength={2}
+        value={expMonth}
+        onChange={(e) => setExpMonth(e.target.value.slice(0, 2))}
       />
       <small className="view-subtitle">Quantidade de Etiquetas</small>
       <input

@@ -207,7 +207,7 @@ ipcMain.handle("print-exp-full-range", async (_, config) => {
     }
 
     const finalZpl = genExpOrderOnlyZpl(config, totalLabelsFormatted);
-    await sendZplOverTcp(ip, port, finalZpl, 0);
+    await sendZplOverTcp(ip, port, finalZpl);
 
     return { success: true };
   } catch (error: unknown) {
@@ -306,9 +306,12 @@ ipcMain.handle("print-sku-label", async (_, config) => {
     const port = config.port || 9100;
     const sku = config.sku;
     const description = config.description;
+    const lot = config.lot;
+    const expYear = config.expYear;
+    const expMonth = config.expMonth;
 
     for (let i = 1; i <= config.totalLabels; i++) {
-      const zpl = `^XA~TA000~JSN^LT0^MNW^MTT^LH0,0^PR4,4~SD10^CI27^MMT^PW815^LL416^LS0^FT50,345^AAN,27,15^FH\^FD240${sku}^FS^BY3,3,81^FT50,322^BCN,,N,N^FH\^FD240${sku}^FS^FT50,80^A0N,51,53^FH\^CI28^FDSOUZA CRUZ LTDA^FS^CI27^FT50,227^A0N,34,33^FH\^CI28^FD${description}^FS^CI27^FT50,159^A0N,51,51^FH\^FD${sku}^FS^CI27^PQ1,0,1,Y^XZ`;
+      const zpl = `^XA~TA000~JSN^LT0^MNW^MTT^LH0,0^PR4,4~SD10^CI27^MMT^PW815^LL416^LS0^FT43,372^AAN,27,15^FH\^FD(240)${sku}^FS^BY3,3,68^FT43,349^BCN,,N,N^FH\^FD240${sku}^FS^FT43,74^A0N,45,48^FH\^CI28^FDSOUZA CRUZ LTDA^FS^CI27^FT43,272^A0N,34,33^FH\^CI28^FD${description}^FS^CI27^FT43,133^A0N,45,51^FH\^CI28^FD${sku}^FS^CI27^FT43,213^A0N,25,25^FH\^CI28^FD${expYear}/${expMonth}^FS^CI27^FT43,174^A0N,25,25^FH\^CI28^FD${lot}^FS^CI27^PQ1,0,1,Y^XZ`;
       await sendZplOverTcp(ip, port, zpl);
     }
 
